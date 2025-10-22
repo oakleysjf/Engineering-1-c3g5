@@ -70,6 +70,7 @@ public class MainGame extends JPanel{
     /**
      * Method to set up and map the standard W (UP), A (LEFT), S (DOWN) and D (RIGHT) controls.
      */
+
     private void setupKeyBindings() {
         InputMap im = getInputMap(WHEN_IN_FOCUSED_WINDOW);
         ActionMap am = getActionMap();
@@ -108,7 +109,7 @@ public class MainGame extends JPanel{
         im.put(KeyStroke.getKeyStroke("released d"), "rightReleased");
         im.put(KeyStroke.getKeyStroke("released RIGHT"), "rightReleased");
 
-        // Sets boolean variables appropriately.
+        // Actions: set booleans accordingly
         am.put("upPressed", new AbstractAction() { public void actionPerformed(ActionEvent e) { up = true; }});
         am.put("upReleased", new AbstractAction() { public void actionPerformed(ActionEvent e) { up = false; }});
 
@@ -121,6 +122,7 @@ public class MainGame extends JPanel{
         am.put("rightPressed", new AbstractAction() { public void actionPerformed(ActionEvent e) { right = true; }});
         am.put("rightReleased", new AbstractAction() { public void actionPerformed(ActionEvent e) { right = false; }});
     }
+
 
     
     /**
