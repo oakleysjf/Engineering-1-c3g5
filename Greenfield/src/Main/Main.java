@@ -8,15 +8,29 @@ public class Main extends JPanel {
     private final Map map;
     private final Player player;
     private final Timer timer;
-    private static final int WINDOW_SIZE = 420;
+    private static final int WINDOW_SIZE = 42;
+
+    //my screen things
+    final int originalTileSize = 32; // 32x32 tile
+    final int scale = 2;
+
+    final int tileSize = originalTileSize * scale; // 64x64 tile
+    final int maxScreenCol = 16;
+    final int maxScreenRow = 10;
+    final int screenWidth = tileSize * maxScreenCol; // 1024 pixels
+    final int screenHeight = tileSize * maxScreenRow; // 640 pixels
+
+    public static int returnTileSize() {
+        return 64;
+    }
 
     public Main() {
-        setPreferredSize(new Dimension(WINDOW_SIZE, WINDOW_SIZE));
+        setPreferredSize(new Dimension(screenWidth, screenHeight));
         setBackground(Color.BLACK);
         setFocusable(true);
 
         map = new Map();
-        player = new Player(map.getCenterX(), map.getCenterY());
+        player = new Player(0, 0);
 
         setupKeyBindings();
 

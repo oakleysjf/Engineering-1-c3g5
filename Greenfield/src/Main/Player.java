@@ -1,7 +1,7 @@
 package Main;
 
-import java.awt.*;
 import GameAssets.*;
+import java.awt.*;
 
 public class Player {
     private int x, y;
@@ -18,18 +18,28 @@ public class Player {
     }
 
     public void update(Map map) {
-        if (up && y - speed > map.getTopBoundary()) {
+        if (up && movementCheck(0, -speed)) {
             y -= speed;
         }
-        if (down && y + speed < map.getBottomBoundary() - diameter) {
+        if (down && movementCheck(0, speed + diameter)) {
             y += speed;
         }
-        if (left && x - speed > map.getLeftBoundary()) {
+        if (left && movementCheck(-speed, 0)) {
             x -= speed;
         }
-        if (right && x + speed < map.getRightBoundary() - diameter) {
+        if (right && movementCheck(speed + diameter, 0)) {
             x += speed;
         }
+    }
+
+    public boolean movementCheck(int x, int y) {
+        // Future implementation for collision detection
+        if (Map.isColliding(this.x + x, this.y + y)) {
+            return false;
+        }
+
+
+        return true;
     }
 
     public void draw(Graphics g) {
