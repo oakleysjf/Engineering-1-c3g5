@@ -5,9 +5,9 @@ import java.awt.*;
 
 public class Player {
     private int x, y;
-    private final int size = 8;
+    private final int size = 20;
     private final int diameter = size * 2;
-    private final int speed = 3;
+    private final int speed = 1;
 
     private boolean up, down, left, right;
     private Inventory playerInventory;
@@ -18,16 +18,16 @@ public class Player {
     }
 
     public void update(Map map) {
-        if (up && movementCheck(0, -speed)) {
+        if (up && (movementCheck(0, -speed) && movementCheck(diameter, -speed))) {
             y -= speed;
         }
-        if (down && movementCheck(0, speed + diameter)) {
+        if (down && (movementCheck(0, speed + diameter) && movementCheck(diameter, speed + diameter))) {
             y += speed;
         }
-        if (left && movementCheck(-speed, 0)) {
+        if (left && (movementCheck(-speed, 0) && movementCheck(-speed, diameter))) {
             x -= speed;
         }
-        if (right && movementCheck(speed + diameter, 0)) {
+        if (right && (movementCheck(speed + diameter, 0) && movementCheck(speed + diameter, diameter))) {
             x += speed;
         }
     }

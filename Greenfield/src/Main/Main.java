@@ -1,5 +1,6 @@
 package Main;
 
+import Tile.TileManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
@@ -14,11 +15,13 @@ public class Main extends JPanel {
     final int originalTileSize = 32; // 32x32 tile
     final int scale = 2;
 
-    final int tileSize = originalTileSize * scale; // 64x64 tile
+    public final int tileSize = originalTileSize * scale; // 64x64 tile
     final int maxScreenCol = 16;
     final int maxScreenRow = 10;
     final int screenWidth = tileSize * maxScreenCol; // 1024 pixels
     final int screenHeight = tileSize * maxScreenRow; // 640 pixels
+
+    TileManager tileM = new TileManager(this);
 
     public static int returnTileSize() {
         return 64;
@@ -34,7 +37,7 @@ public class Main extends JPanel {
 
         setupKeyBindings();
 
-        timer = new Timer(16, e -> {
+        timer = new Timer(4, e -> {
             player.update(map);
             repaint();
         });
@@ -87,6 +90,7 @@ public class Main extends JPanel {
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
         map.draw(g);
+        tileM.draw((Graphics2D) g);
         player.draw(g);
     }
 
