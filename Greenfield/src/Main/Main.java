@@ -8,7 +8,6 @@ public class Main extends JPanel {
     private final Map map;
     private final Player player;
     private final Timer timer;
-    private static final int WINDOW_SIZE = 42;
 
     //my screen things
     final int originalTileSize = 32; // 32x32 tile
