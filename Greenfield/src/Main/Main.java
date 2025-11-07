@@ -7,6 +7,7 @@ import javax.swing.*;
 
 import Main.Interactables.Items.*;
 import Main.Interactables.Obstacles.*;
+import Main.Interactables.NPCs.Professor;
 
 
 // Main class to be compiled into .jar.
@@ -60,6 +61,11 @@ public class Main extends JPanel {
         key = new Key("Golden Key");
         door = new Door(new Key("Golden Key"));
 
+        // Initialize the Professor in the top-right of the arena
+        int professorStartX = screenWidth - 100; 
+        int professorStartY = 250; 
+        professor = new Professor("Professor", professorStartX, professorStartY, 200);
+
         // Calls the setupKeyBindings method.
         setupKeyBindings();
 
@@ -79,6 +85,7 @@ public class Main extends JPanel {
                 } else {
                     player.update(map);
                     checkInteractions();
+                    professor.walkCycle(); // Update professor's position
                 }
             }
             // Repaints all components actively.
@@ -190,6 +197,33 @@ public class Main extends JPanel {
                 }
             }
         }
+
+        int interactionPadding = 20;
+        Rectangle professorBounds = new Rectangle(
+            professor.getX() - interactionPadding,
+            professor.getY() - interactionPadding,
+            professor.getWidth() + 2 * interactionPadding,
+            professor.getHeight() + 2 * interactionPadding
+        );
+        if (playerBounds.intersects(professorBounds)) {
+            int response = JOptionPane.showConfirmDialog(
+                this,
+                "Do you want to interact with the Professor?",
+                "Professor Interaction",
+                JOptionPane.YES_NO_OPTION
+            );
+
+            // TODO: If player does not have assignment, professor chases & stuns player. If player does have assignment, ignore and let player pass. 
+            if (response == JOptionPane.YES_OPTION || response == JOptionPane.NO_OPTION) {
+                // Close the dialogue box
+            }
+        }
+
+        // Check if the player reaches the end of the map arena
+        if (player.getX() <= door.getX()) {
+            JOptionPane.showMessageDialog(this, "You have reached the end of the arena. Game Over.", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+            System.exit(0);
+        }
     }
 
     @Override
@@ -198,6 +232,7 @@ public class Main extends JPanel {
         map.draw(g);
         tileM.draw((Graphics2D) g);
         player.draw(g);
+        professor.draw(g);
         
         if (!keyPickedUp) {
             g.setColor(Color.YELLOW);
@@ -243,7 +278,7 @@ public class Main extends JPanel {
         g.setColor(door.isLocked() ? Color.RED : Color.GREEN);
         g.fillRect(drawDoorX, drawDoorY, drawDoorW, drawDoorH);
 
-        // If time ran out, show failure message centered on screen.
+        // If time runs out, show failure message centered on screen.
         if (timeUp) {
             String msg = "You failed to escape!";
             Graphics2D g2 = (Graphics2D) g;
@@ -276,4 +311,6 @@ public class Main extends JPanel {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
     }
+
+    private Professor professor;
 }
