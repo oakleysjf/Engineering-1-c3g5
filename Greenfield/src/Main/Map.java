@@ -1,5 +1,6 @@
 package Main;
 
+import Tile.TileManager;
 import java.awt.*;
 
 public class Map {
@@ -7,8 +8,8 @@ public class Map {
     private final int borderWidth = 40;
     private final int boxThickness = 4;
 
-    // boundary boxes for the map
-    static int[][] hitbox = {
+    // obsolete
+/*     static int[][] hitbox = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
@@ -19,8 +20,9 @@ public class Map {
     {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},};
-
-public static int[][] tileBox = {
+ */
+    // obsolete
+/* public static int[][] tileBox = {
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 0},
@@ -30,20 +32,21 @@ public static int[][] tileBox = {
     {0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0},
     {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},};
+    {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},}; */
 
     public static boolean isColliding(int playerX, int playerY) {
         try {
         // Future implementation for collision detection
-            if (hitbox[playerY / Main.returnTileSize()][playerX / Main.returnTileSize()] == 1) {
+            if (TileManager.mapBoundaryNum[playerY / Main.returnTileSize()][playerX / Main.returnTileSize()] == 1) {
             return true;
             }
         } catch (Exception e) {
-            return true;
+            return false;
         }
 
         return false;
     }
+
 
     public void draw(Graphics g) {
         g.setColor(Color.magenta);

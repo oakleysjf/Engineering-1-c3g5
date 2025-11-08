@@ -12,19 +12,39 @@ public class Main extends JPanel {
     private static final int WINDOW_SIZE = 42;
 
     //my screen things
-    final int originalTileSize = 32; // 32x32 tile
-    final int scale = 2;
+    final static int originalTileSize = 32; // 32x32 tile
+    final static int scale = 2;
 
-    public final int tileSize = originalTileSize * scale; // 64x64 tile
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 10;
-    final int screenWidth = tileSize * maxScreenCol; // 1024 pixels
-    final int screenHeight = tileSize * maxScreenRow; // 640 pixels
+    public static final int tileSize = originalTileSize * scale; // 64x64 tile
+    final static int maxScreenCol = 16;
+    final static int maxScreenRow = 10;
+    final static int screenWidth = tileSize * maxScreenCol; // 1024 pixels
+    final static int screenHeight = tileSize * maxScreenRow; // 640 pixels
+
+    public final static int maxWorldCol = 25;
+    public final static int maxWorldRow = 25;
+    public final static int worldWidth = tileSize * maxWorldCol;
+    public final static int worldHeight = tileSize * maxWorldRow;
 
     TileManager tileM = new TileManager(this);
 
     public static int returnTileSize() {
-        return 64;
+        return tileSize;
+    }
+
+    public static int returnScreenWidth() {
+        return screenWidth;
+    }
+
+    public static int returnScreenHeight() {
+        return screenHeight;
+    }
+
+    public static int returnWorldWidth() {
+        return worldWidth;
+    }
+    public static int returnWorldHeight() {
+        return worldHeight;
     }
 
     public Main() {
@@ -89,7 +109,7 @@ public class Main extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-        map.draw(g);
+        //map.draw(g);
         tileM.draw((Graphics2D) g);
         player.draw(g);
     }
