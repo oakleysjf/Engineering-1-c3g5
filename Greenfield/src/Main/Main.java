@@ -20,7 +20,9 @@ public class Main extends JPanel {
     private final Player player;
     private Timer timer;
 
-    
+    // Tracks interactions with all interactables
+    private int interactionCounter = 0; 
+
     // Initialise items and interactables.
     private final Key key;
     private final Door door;
@@ -189,6 +191,7 @@ public class Main extends JPanel {
         if (!keyPickedUp && playerBounds.intersects(keyBounds)) {
             player.getInventory().add(key);
             keyPickedUp = true;
+            interactionCounter++;
         }
 
         final int fluW = 16, fluH = 16;
@@ -196,6 +199,7 @@ public class Main extends JPanel {
         if (!fluTaken && playerBounds.intersects(fluBounds)) {
             freshersFlu.interact(player);
             fluTaken = true;
+            interactionCounter++;
         }
 
         final int drinkW = 16, drinkH = 16;
@@ -203,6 +207,7 @@ public class Main extends JPanel {
         if (!drinkTaken && playerBounds.intersects(drinkBounds)) {
             energyDrink.interact(player);
             drinkTaken = true;
+            interactionCounter++;
         }
 
         final int doorW = 64, doorH = 64;
@@ -261,6 +266,7 @@ public class Main extends JPanel {
                 "Professor Interaction",
                 JOptionPane.YES_NO_OPTION
             );
+            interactionCounter++;
 
             // MESSAGE: Cannot figure out a working method for chase interaction. This is left as blank. - Oakley 
             if (response == JOptionPane.YES_OPTION || response == JOptionPane.NO_OPTION) {
@@ -273,11 +279,10 @@ public class Main extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
-    // Update player score based on elapsed time: -50 every 15 seconds
-    long elapsed = Math.max(0L, System.currentTimeMillis() - startTimeMillis);
-    long steps = elapsed / 15000L; // number of 15s intervals passed
-    long decrements = steps * 50L;
-    playerScore = (int) Math.max(0L, 500L - decrements);
+        long elapsed = Math.max(0L, System.currentTimeMillis() - startTimeMillis);
+        long steps = elapsed / 15000L;
+        long decrements = steps * 50L;
+        playerScore = (int) Math.max(0L, 500L - decrements);
         map.draw(g);
         tileM.draw((Graphics2D) g);
         player.draw(g);
@@ -411,9 +416,17 @@ public class Main extends JPanel {
             g2.setColor(Color.WHITE);
             g2.drawString(scoreText, sX, sY);
 
+            // draw the interaction count below the score
+            String interactionText = "Interactions: " + interactionCounter;
+            int iW = sfm.stringWidth(interactionText);
+            int iX = (screenWidth - iW) / 2;
+            int iY = sY + sfm.getHeight() + 8;
+            g2.drawString(interactionText, iX, iY);
+
             g2.setFont(originalFont);
         }
     }
+
 
     public static void main(String[] args) {
         JFrame frame = new JFrame("Greenfield");
