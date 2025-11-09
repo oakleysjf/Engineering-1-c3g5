@@ -4,13 +4,15 @@ import javax.swing.JComponent;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import Main.Player;
+
 public  class Item extends JComponent{
     private int x, y;
-    private ArrayList<String> possibleNameList = new ArrayList<>(Arrays.asList("Key", "Assignment", "Book"));
+    private ArrayList<String> possibleNameList = new ArrayList<>(Arrays.asList("Key", "Assignment", "Book", "FreshersFlu", "EnergyDrink"));
     private String name;
 
     public Item(String name, int x, int y) {
-        this.possibleNameList = new ArrayList<>(Arrays.asList("Key", "Book", "Assignment"));
+    this.possibleNameList = new ArrayList<>(Arrays.asList("Key", "Book", "Assignment", "FreshersFlu", "EnergyDrink"));
 
         if(!possibleNameList.contains(name)){
             throw new IllegalArgumentException();
@@ -40,5 +42,9 @@ public  class Item extends JComponent{
 
     public String getName() {
         return name;
+    }
+
+    public void interact(Player player) {
+        // Default implementation does nothing. Subclasses can override.
     }
 }

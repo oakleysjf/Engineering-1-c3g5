@@ -3,12 +3,17 @@ package Main.Interactables.NPCs;
 import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
+import java.awt.image.BufferedImage;
+import javax.imageio.ImageIO;
+import java.io.IOException;
 
 public class Professor extends NPC {
     private int x, y;
     private double angle;
     private int pathSize;
     private int speed;
+
+    private BufferedImage professorImage;
 
     /**
      * Constructor for the Professor class.
@@ -24,6 +29,16 @@ public class Professor extends NPC {
         this.angle = 0;
         this.pathSize = pathSize;
         this.speed = 1; // Slow down the professor
+
+        try {
+            professorImage = ImageIO.read(getClass().getResource("/Tiles/professor_art.png"));
+            if (professorImage == null) {
+                throw new IOException("Image file not found: /Tiles/professor_art.png");
+            }
+        } catch (IOException e) {
+            System.err.println("Failed to load professor image: " + e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -42,13 +57,17 @@ public class Professor extends NPC {
     }
 
     /**
-     * Draws the Professor as a black circle.
+     * Draws the Professor as a black circle or the professor_art.png image.
      * @param g The Graphics object to draw with.
      */
     @Override
     public void draw(Graphics g) {
-        g.setColor(Color.BLACK);
-        g.fillOval(getX() - 10, getY() - 10, 20, 20); // Draw a circle with a radius of 10
+        if (professorImage != null) {
+            g.drawImage(professorImage, getX() - 10, getY() - 10, 20, 20, null);
+        } else {
+            g.setColor(Color.BLACK);
+            g.fillOval(getX() - 10, getY() - 10, 20, 20); // Fallback to a circle
+        }
     }
 
     public boolean movementCheck(int x, int y) {

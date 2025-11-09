@@ -16,7 +16,8 @@ public class Door extends Interactable {
     }
 
     public void unlock(Key key) {
-        if (key.equals(requiredKey)) {
+        // Compare by name to allow different Key instances with the same logical key name
+        if (key != null && requiredKey != null && key.getName() != null && key.getName().equals(requiredKey.getName())) {
             locked = false;
         }
     }

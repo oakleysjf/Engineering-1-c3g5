@@ -8,6 +8,7 @@ import javax.swing.*;
 import Main.Interactables.Items.*;
 import Main.Interactables.Obstacles.*;
 import Main.Interactables.NPCs.Professor;
+import Main.Interactables.Exit;
 
 
 // Main class to be compiled into .jar.
@@ -23,7 +24,24 @@ public class Main extends JPanel {
     // Initialise items and interactables.
     private final Key key;
     private final Door door;
+    private final Exit exit;
     private boolean keyPickedUp = false;
+    private Professor professor;
+    private FreshersFlu freshersFlu;
+    private EnergyDrink energyDrink;
+
+    // Add FreshersFlu and EnergyDrink as fields, but initialize in constructor
+    private boolean fluTaken = false;
+    private boolean drinkTaken = false;
+
+    // Track whether the player has escaped by reaching the exit.
+    private boolean escaped = false;
+
+    // Player score, decreases by 50 for every 30s passed.
+    private int playerScore = 500;
+
+    // Start time used to calculate score decay
+    private long startTimeMillis;
 
     // Logic for the game time - 5 minutes, if the timer runs out, terminate and issue message.
     private final long gameTime = 5 * 60 * 1000L; 
@@ -57,9 +75,13 @@ public class Main extends JPanel {
         map = new Map();
         player = new Player(0, 0);
 
+
         // Initialise items and interactables.
         key = new Key("Golden Key");
-        door = new Door(new Key("Golden Key"));
+        door = new Door(key);
+        exit = new Exit();
+        freshersFlu = new FreshersFlu("FreshersFlu", 128, 128);
+        energyDrink = new EnergyDrink("EnergyDrink", 448, 320); 
 
         // Initialize the Professor in the top-right of the arena
         int professorStartX = screenWidth - 100; 
@@ -69,11 +91,12 @@ public class Main extends JPanel {
         // Calls the setupKeyBindings method.
         setupKeyBindings();
 
-        // Initialize countdown
-        endTimeMillis = System.currentTimeMillis() + gameTime;
+    // Initialize countdown and start time for score decay
+    startTimeMillis = System.currentTimeMillis();
+    endTimeMillis = startTimeMillis + gameTime;
 
         timer = new Timer(4, e -> {
-            if (!timeUp) {
+            if (!timeUp && !escaped) {
                 long remaining = endTimeMillis - System.currentTimeMillis();
                 if (remaining <= 0) {
                     // Time is up: stop game updates and schedule exit after showing message
@@ -93,7 +116,7 @@ public class Main extends JPanel {
         });
         timer.start();
     }
-
+    
     /**
      * Sets up keyboard input mappings for player movement controls using WASD keys.
      * This method configures both key press and release events for each direction:
@@ -151,7 +174,7 @@ public class Main extends JPanel {
     
     /**
      * Fresher's flu affect.
-     * Checks the interactions of player with key and door.
+     * Checks the interactions of player with all interactables and decides the game over/game success logic.
      * If player intersects key location, delete from map and add to inventory.
      */
     private void checkInteractions() {
@@ -168,9 +191,24 @@ public class Main extends JPanel {
             keyPickedUp = true;
         }
 
+        final int fluW = 16, fluH = 16;
+        Rectangle fluBounds = new Rectangle(128, 128, fluW, fluH);
+        if (!fluTaken && playerBounds.intersects(fluBounds)) {
+            freshersFlu.interact(player);
+            fluTaken = true;
+        }
+
+        final int drinkW = 16, drinkH = 16;
+        Rectangle drinkBounds = new Rectangle(448, 320, drinkW, drinkH);
+        if (!drinkTaken && playerBounds.intersects(drinkBounds)) {
+            energyDrink.interact(player);
+            drinkTaken = true;
+        }
+
         final int doorW = 64, doorH = 64;
-        final int doorX = screenWidth - doorW; 
-        final int doorY = screenHeight / 2 - doorH / 2;
+        // Door is at the far-right edge of the world (world coordinates)
+        final int doorX = Map.tileBox[0].length * Main.returnTileSize() - doorW;
+        final int doorY = (Map.tileBox.length * Main.returnTileSize()) / 2 - doorH / 2;
         Rectangle doorBounds = new Rectangle(doorX, doorY, doorW, doorH);
 
         if (playerBounds.intersects(doorBounds)) {
@@ -179,6 +217,17 @@ public class Main extends JPanel {
                 if (door.isLocked()) {
                     door.unlock(key);
                     door.interact();
+                }
+
+                // If door is unlocked and player is intersecting, they've escaped.
+                if (!door.isLocked() && !escaped) {
+                    escaped = true;
+                    // Stop normal updates and schedule program exit after showing success message
+                    timer.stop();
+                    Timer exitTimer = new Timer(3000, ev -> System.exit(0));
+                    exitTimer.setRepeats(false);
+                    exitTimer.start();
+                    repaint();
                 }
             } else {
                 int px = player.getX();
@@ -208,29 +257,27 @@ public class Main extends JPanel {
         if (playerBounds.intersects(professorBounds)) {
             int response = JOptionPane.showConfirmDialog(
                 this,
-                "Do you want to interact with the Professor?",
+                "Professor: Do you have your assignment?!",
                 "Professor Interaction",
                 JOptionPane.YES_NO_OPTION
             );
 
-            // TODO: If player does not have assignment, professor chases & stuns player. If player does have assignment, ignore and let player pass. 
+            // MESSAGE: Cannot figure out a working method for chase interaction. This is left as blank. - Oakley 
             if (response == JOptionPane.YES_OPTION || response == JOptionPane.NO_OPTION) {
                 // Close the dialogue box
+                
             }
-        }
-
-        // Check if the player reaches the end of the map arena
-        if (player.getX() + player.getDiameter() >= door.getX()) {
-            // CURRENTLY LOSING MY MIND OVER THIS - Oakley
-
-            // JOptionPane.showMessageDialog(this, "You have reached the end of the arena. Game Over.", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-            // System.exit(0);
         }
     }
 
     @Override
     protected void paintComponent(Graphics g) {
         super.paintComponent(g);
+    // Update player score based on elapsed time: -50 every 15 seconds
+    long elapsed = Math.max(0L, System.currentTimeMillis() - startTimeMillis);
+    long steps = elapsed / 15000L; // number of 15s intervals passed
+    long decrements = steps * 50L;
+    playerScore = (int) Math.max(0L, 500L - decrements);
         map.draw(g);
         tileM.draw((Graphics2D) g);
         player.draw(g);
@@ -239,6 +286,14 @@ public class Main extends JPanel {
         if (!keyPickedUp) {
             g.setColor(Color.YELLOW);
             g.fillRect(250, 250, 16, 16);
+        }
+        if (!fluTaken) {
+            g.setColor(Color.CYAN);
+            g.fillRect(128, 128, 16, 16);
+        }
+        if (!drinkTaken) {
+            g.setColor(Color.ORANGE);
+            g.fillRect(448, 320, 16, 16);
         }
 
         // Draw countdown timer at the top of the game.
@@ -271,6 +326,17 @@ public class Main extends JPanel {
             int ty = boxY + (boxH + fm.getAscent()) / 2 - 2;
             g2.drawString(timeText, tx, ty);
 
+            // Draw a small subtitle below the timer
+            String subtitle = "Escape from Uni!";
+            Font subFont = originalFont.deriveFont(Font.PLAIN, 14f);
+            g2.setFont(subFont);
+            FontMetrics sfm = g2.getFontMetrics();
+            int subW = sfm.stringWidth(subtitle);
+            int subX = (screenWidth - subW) / 2;
+            int subY = boxY + boxH + sfm.getAscent() + 4;
+            g2.setColor(Color.WHITE);
+            g2.drawString(subtitle, subX, subY);
+
             g2.setFont(originalFont);
         }
 
@@ -279,6 +345,17 @@ public class Main extends JPanel {
         int drawDoorY = screenHeight / 2 - drawDoorH / 2;
         g.setColor(door.isLocked() ? Color.RED : Color.GREEN);
         g.fillRect(drawDoorX, drawDoorY, drawDoorW, drawDoorH);
+        // Draw the exit indicator inside the door
+        exit.draw(g, drawDoorX, drawDoorY, drawDoorW, drawDoorH);
+
+        // Draw score in top-left (on top of tiles/player)
+        Graphics2D gScore = (Graphics2D) g;
+        Font origFontScore = gScore.getFont();
+        Font scoreFontTop = origFontScore.deriveFont(Font.BOLD, 16f);
+        gScore.setFont(scoreFontTop);
+        gScore.setColor(Color.WHITE);
+        gScore.drawString("Score: " + playerScore, 10, 20);
+        gScore.setFont(origFontScore);
 
         // If time runs out, show failure message centered on screen.
         if (timeUp) {
@@ -302,6 +379,40 @@ public class Main extends JPanel {
 
             g2.setFont(originalFont);
         }
+
+        // If player escaped, show success overlay with score beneath
+        if (escaped) {
+            String msg = "You escaped!";
+            Graphics2D g2 = (Graphics2D) g;
+            Font originalFont = g2.getFont();
+            Font msgFont = originalFont.deriveFont(Font.BOLD, 36f);
+            g2.setFont(msgFont);
+            FontMetrics fm = g2.getFontMetrics();
+            int textW = fm.stringWidth(msg);
+            int textH = fm.getHeight();
+            int tx = (screenWidth - textW) / 2;
+            int ty = (screenHeight - textH) / 2 + fm.getAscent();
+
+            // background box
+            g2.setColor(new Color(0, 0, 0, 200));
+            g2.fillRect(tx - 12, ty - fm.getAscent() - 8, textW + 24, textH + 16 + 24);
+
+            g2.setColor(Color.GREEN);
+            g2.drawString(msg, tx, ty);
+
+            // draw the score below the message
+            String scoreText = "Score: " + playerScore;
+            Font scoreFont = originalFont.deriveFont(Font.PLAIN, 20f);
+            g2.setFont(scoreFont);
+            FontMetrics sfm = g2.getFontMetrics();
+            int sW = sfm.stringWidth(scoreText);
+            int sX = (screenWidth - sW) / 2;
+            int sY = ty + sfm.getHeight() + 8;
+            g2.setColor(Color.WHITE);
+            g2.drawString(scoreText, sX, sY);
+
+            g2.setFont(originalFont);
+        }
     }
 
     public static void main(String[] args) {
@@ -314,5 +425,4 @@ public class Main extends JPanel {
         frame.setVisible(true);
     }
 
-    private Professor professor;
 }
