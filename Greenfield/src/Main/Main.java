@@ -150,7 +150,7 @@ public class Main extends JPanel {
 
     
     /**
-     * TODO: NPC interactions, Fresher's flu affect.
+     * Fresher's flu affect.
      * Checks the interactions of player with key and door.
      * If player intersects key location, delete from map and add to inventory.
      */
@@ -220,9 +220,11 @@ public class Main extends JPanel {
         }
 
         // Check if the player reaches the end of the map arena
-        if (player.getX() <= door.getX()) {
-            JOptionPane.showMessageDialog(this, "You have reached the end of the arena. Game Over.", "Game Over", JOptionPane.INFORMATION_MESSAGE);
-            System.exit(0);
+        if (player.getX() + player.getDiameter() >= door.getX()) {
+            // CURRENTLY LOSING MY MIND OVER THIS - Oakley
+
+            // JOptionPane.showMessageDialog(this, "You have reached the end of the arena. Game Over.", "Game Over", JOptionPane.INFORMATION_MESSAGE);
+            // System.exit(0);
         }
     }
 
