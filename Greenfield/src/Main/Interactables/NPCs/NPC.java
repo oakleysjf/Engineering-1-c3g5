@@ -1,11 +1,15 @@
 package Main.Interactables.NPCs;
 
-import javax.swing.JComponent;
+import Main.Main;
+import Main.Player;
 import java.awt.Graphics;
+import javax.swing.JComponent;
 
 public class NPC extends JComponent {
     private String name;
     private int x, y;
+    int offsetX;
+    int offsetY;
     private boolean hostile;
     private boolean interactable;
 
@@ -44,7 +48,15 @@ public class NPC extends JComponent {
     }
 
     public void setX(int x) {
-        this.x = x;
+        offsetX = Player.returnPlayerX();
+
+        if (offsetX < 0) {
+            offsetX = 0;
+        }
+        else if (offsetX > Main.worldWidth - Main.returnScreenWidth()) {
+            offsetX = Main.worldWidth - Main.returnScreenWidth();
+        }
+        this.x = x - offsetX;
     }
 
     public int getY() {
@@ -52,7 +64,15 @@ public class NPC extends JComponent {
     }
 
     public void setY(int y) {
-        this.y = y;
+        offsetY = Player.returnPlayerY();
+
+        if (offsetY < 0) {
+            offsetY = 0;
+        }
+        else if (offsetY > Main.worldHeight - Main.returnScreenHeight()) {
+            offsetY = Main.worldHeight - Main.returnScreenHeight();
+        }
+        this.y = y - offsetY;
     }
 
     public boolean isHostile() {

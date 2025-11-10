@@ -1,5 +1,6 @@
 package Main;
 
+import Tile.TileManager;
 import java.awt.*;
 
 public class Map {
@@ -35,11 +36,11 @@ public static int[][] tileBox = {
     public static boolean isColliding(int playerX, int playerY) {
         try {
         // Future implementation for collision detection
-            if (hitbox[playerY / Main.returnTileSize()][playerX / Main.returnTileSize()] == 1) {
+            if (TileManager.mapBoundaryNum[playerY / Main.returnTileSize()][playerX / Main.returnTileSize()] == 1) {
             return true;
             }
         } catch (Exception e) {
-            return true;
+            return false;
         }
 
         return false;

@@ -1,22 +1,25 @@
 package Main;
 
-import java.awt.*;
-import java.util.List;
-
 import Main.Interactables.Items.Item;
-
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
-import java.awt.image.BufferedImage;
+import java.util.List;
 import javax.imageio.ImageIO;
-import java.io.IOException;
 
 // Player class to be controlled by the user.
 public class Player {
     
     // Player position, size and speed.
-    private int x, y;
-    private final int size = 8;
+    private static int x, y;
+    private static int offsetX, offsetY;
+
+    public  int screenX;
+    public  int screenY;
+
+    private final int size = 22;
     private final int diameter = size * 2;
     private int speed = 2;
 
@@ -31,11 +34,21 @@ public class Player {
 
     private BufferedImage playerImage;
 
+    public static int returnPlayerX() {
+        return x;
+    }
+    public static int returnPlayerY() {
+        return y;
+    }
+
     // Constructor.
     public Player(int startX, int startY) {
         this.x = startX;
         this.y = startY;
         this.playerInventory = new Inventory(); // Initialize the inventory
+
+        screenX = Main.returnTileSize() * 8 - size;
+        screenY = Main.returnTileSize() * 5 - size;
 
         try {
             playerImage = ImageIO.read(getClass().getResource("/Tiles/student_art.png"));
@@ -114,16 +127,16 @@ public class Player {
             stunned = false;
         }
         if (!stunned) {
-            if (up && movementCheck(0, -speed)) {
+            if (up && (movementCheck(0, -speed) && movementCheck(diameter, -speed))) {
                 y -= speed;
             }
-            if (down && movementCheck(0, speed + diameter)) {
+            if (down && (movementCheck(0, speed + diameter) && movementCheck(diameter, speed + diameter))) {
                 y += speed;
             }
-            if (left && movementCheck(-speed, 0)) {
+            if (left && (movementCheck(-speed, 0) && movementCheck(-speed, diameter))) {
                 x -= speed;
             }
-            if (right && movementCheck(speed + diameter, 0)) {
+            if (right && (movementCheck(speed + diameter, 0) && movementCheck(speed + diameter, diameter))) {
                 x += speed;
             }
         }
@@ -131,7 +144,7 @@ public class Player {
 
     public boolean movementCheck(int x, int y) {
         // Future implementation for collision detection
-        if (Map.isColliding(this.x + x, this.y + y)) {
+        if (Map.isColliding(this.x + x + screenX, this.y + y + screenY)) {
             return false;
         }
 
@@ -139,11 +152,32 @@ public class Player {
     }
 
     public void draw(Graphics g) {
+
+        if (x < 0) {
+            offsetX = x;
+        }
+        else if (x > Main.returnWorldWidth() - Main.returnScreenWidth()) {
+            offsetX = x - (Main.returnWorldWidth() - Main.returnScreenWidth());
+        }
+        else {
+            offsetX = 0;
+        }
+
+        if (y < 0) {
+            offsetY = y;
+        }
+        else if (y > Main.returnWorldHeight() - Main.returnScreenHeight()) {
+            offsetY = y - (Main.returnWorldHeight() - Main.returnScreenHeight());
+        }
+        else {
+            offsetY = 0;
+        }   
+
         if (playerImage != null) {
-            g.drawImage(playerImage, x, y, 20, 20, null);
+            g.drawImage(playerImage, screenX + offsetX, screenY + offsetY, diameter, diameter, null);
         } else {
             g.setColor(Color.BLUE);
-            g.fillOval(x, y, 20, 20); // Fallback to a circle
+            g.fillOval(screenX + offsetX, screenY + offsetY, diameter, diameter); // Fallback to a circle
         }
     }
 
@@ -157,9 +191,9 @@ public class Player {
 
     // Getter methods for the player coordinates.
 
-    public int getX() { return x; }
-    public int getY() { return y; }
-    
+    public int getX() { return screenX + offsetX; }
+    public int getY() { return screenY + offsetY; }
+
     /**
      * Set the player's position directly.
      */

@@ -1,14 +1,13 @@
 package Main;
 
+import Main.Interactables.Exit;
+import Main.Interactables.Items.*;
+import Main.Interactables.NPCs.Professor;
+import Main.Interactables.Obstacles.*;
 import Tile.TileManager;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-
-import Main.Interactables.Items.*;
-import Main.Interactables.Obstacles.*;
-import Main.Interactables.NPCs.Professor;
-import Main.Interactables.Exit;
 
 
 // Main class to be compiled into .jar.
@@ -51,18 +50,48 @@ public class Main extends JPanel {
     private boolean timeUp = false;
 
     //my screen things
-    final int originalTileSize = 32; // 32x32 tile
-    final int scale = 2;
+    final static int originalTileSize = 32; // 32x32 tile
+    final static int scale = 2;
 
-    public final int tileSize = originalTileSize * scale; // 64x64 tile
-    final int maxScreenCol = 16;
-    final int maxScreenRow = 10;
-    final int screenWidth = tileSize * maxScreenCol; // 1024 pixels
-    final int screenHeight = tileSize * maxScreenRow; // 640 pixels
+    public final static int tileSize = originalTileSize * scale; // 64x64 tile
+    final static int maxScreenCol = 16;
+    final static int maxScreenRow = 10;
+    final static int screenWidth = tileSize * maxScreenCol; // 1024 pixels
+    final static int screenHeight = tileSize * maxScreenRow; // 640 pixels
+
+    public final static int maxWorldCol = 80;
+    public final static int maxWorldRow = 25;
+    public final static int worldWidth = tileSize * maxWorldCol;
+    public final static int worldHeight = tileSize * maxWorldRow;
+
+     int keyX = 2 * tileSize, keyY = 5 * tileSize;
+     int fluX = 6 * tileSize, fluY = 10 * tileSize;
+     int drinkX = 14 * tileSize, drinkY = 3 * tileSize;
+    int doorX = 24 * tileSize, doorY = 24 * tileSize -10;
+
+    private static int offsetX, offsetY;
 
     TileManager tileM = new TileManager(this);
+    
+    public static int returnTileSize() {
+        return tileSize;
+    }
 
-    public static int returnTileSize() { return 64; }
+    public static int returnScreenWidth() {
+        return screenWidth;
+    }
+
+    public static int returnScreenHeight() {
+        return screenHeight;
+    }
+
+    public static int returnWorldWidth() {
+        return worldWidth;
+    }
+    public static int returnWorldHeight() {
+        return worldHeight;
+    }
+
 
     /**
      * Constructor for the main executable class. 
@@ -75,7 +104,7 @@ public class Main extends JPanel {
 
         // Initialise map and player.
         map = new Map();
-        player = new Player(0, 0);
+        player = new Player(16 * tileSize, 18 * tileSize);
 
 
         // Initialise items and interactables.
@@ -185,17 +214,15 @@ public class Main extends JPanel {
 
         // Key position
         final int keyW = 16, keyH = 16;
-        final int keyX = 250, keyY = 250;
-        Rectangle keyBounds = new Rectangle(keyX, keyY, keyW, keyH);
+        Rectangle keyBounds = new Rectangle(keyX - offsetX, keyY - offsetY, keyW, keyH);
 
         if (!keyPickedUp && playerBounds.intersects(keyBounds)) {
             player.getInventory().add(key);
             keyPickedUp = true;
             interactionCounter++;
         }
-
         final int fluW = 16, fluH = 16;
-        Rectangle fluBounds = new Rectangle(128, 128, fluW, fluH);
+        Rectangle fluBounds = new Rectangle(fluX - offsetX, fluY - offsetY, fluW, fluH);
         if (!fluTaken && playerBounds.intersects(fluBounds)) {
             freshersFlu.interact(player);
             fluTaken = true;
@@ -203,7 +230,7 @@ public class Main extends JPanel {
         }
 
         final int drinkW = 16, drinkH = 16;
-        Rectangle drinkBounds = new Rectangle(448, 320, drinkW, drinkH);
+        Rectangle drinkBounds = new Rectangle(drinkX - offsetX, drinkY - offsetY, drinkW, drinkH);
         if (!drinkTaken && playerBounds.intersects(drinkBounds)) {
             energyDrink.interact(player);
             drinkTaken = true;
@@ -212,9 +239,8 @@ public class Main extends JPanel {
 
         final int doorW = 64, doorH = 64;
         // Door is at the far-right edge of the world (world coordinates)
-        final int doorX = Map.tileBox[0].length * Main.returnTileSize() - doorW;
-        final int doorY = (Map.tileBox.length * Main.returnTileSize()) / 2 - doorH / 2;
-        Rectangle doorBounds = new Rectangle(doorX, doorY, doorW, doorH);
+
+        Rectangle doorBounds = new Rectangle(doorX - offsetX, doorY - offsetY, doorW, doorH);
 
         if (playerBounds.intersects(doorBounds)) {
             boolean hasKey = player.getInventory().getItems().contains(key);
@@ -283,22 +309,40 @@ public class Main extends JPanel {
         long steps = elapsed / 15000L;
         long decrements = steps * 50L;
         playerScore = (int) Math.max(0L, 500L - decrements);
-        map.draw(g);
+
+        offsetX = Player.returnPlayerX();
+        offsetY = Player.returnPlayerY();
+
+        if (offsetX < 0) {
+            offsetX = 0;
+        }
+        else if (offsetX > worldWidth - returnScreenWidth()) {
+            offsetX = worldWidth - returnScreenWidth();
+        }
+        if (offsetY < 0) {
+            offsetY = 0;
+        }
+        else if (offsetY > worldHeight - returnScreenHeight()) {
+            offsetY = worldHeight - returnScreenHeight();
+        }
+
+        //map.draw(g);
+
         tileM.draw((Graphics2D) g);
         player.draw(g);
         professor.draw(g);
         
         if (!keyPickedUp) {
             g.setColor(Color.YELLOW);
-            g.fillRect(250, 250, 16, 16);
+            g.fillRect(keyX - offsetX, keyY - offsetY, 16, 16);
         }
         if (!fluTaken) {
             g.setColor(Color.CYAN);
-            g.fillRect(128, 128, 16, 16);
+            g.fillRect(fluX - offsetX, fluY - offsetY, 16, 16);
         }
         if (!drinkTaken) {
             g.setColor(Color.ORANGE);
-            g.fillRect(448, 320, 16, 16);
+            g.fillRect(drinkX - offsetX, drinkY - offsetY, 16, 16);
         }
 
         // Draw countdown timer at the top of the game.
@@ -349,9 +393,9 @@ public class Main extends JPanel {
         int drawDoorX = screenWidth - drawDoorW;
         int drawDoorY = screenHeight / 2 - drawDoorH / 2;
         g.setColor(door.isLocked() ? Color.RED : Color.GREEN);
-        g.fillRect(drawDoorX, drawDoorY, drawDoorW, drawDoorH);
+        g.fillRect(doorX - offsetX, doorY - offsetY, drawDoorW, drawDoorH);
         // Draw the exit indicator inside the door
-        exit.draw(g, drawDoorX, drawDoorY, drawDoorW, drawDoorH);
+        exit.draw(g, doorX - offsetX, doorY - offsetY, drawDoorW, drawDoorH);
 
         // Draw score in top-left (on top of tiles/player)
         Graphics2D gScore = (Graphics2D) g;

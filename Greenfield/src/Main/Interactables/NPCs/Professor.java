@@ -4,8 +4,8 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.Rectangle;
 import java.awt.image.BufferedImage;
-import javax.imageio.ImageIO;
 import java.io.IOException;
+import javax.imageio.ImageIO;
 
 public class Professor extends NPC {
     private int x, y;
@@ -22,6 +22,11 @@ public class Professor extends NPC {
      * @param startY The initial y-coordinate.
      * @param pathSize The length of the path taken during walkCycle() method.
      */
+
+    private final int size = 22;
+    private final int diameter = size * 2;
+
+
     public Professor(String name, int startX, int startY, int pathSize) {
         super(name, startX, startY);
         this.x = startX;
@@ -63,17 +68,17 @@ public class Professor extends NPC {
     @Override
     public void draw(Graphics g) {
         if (professorImage != null) {
-            g.drawImage(professorImage, getX() - 10, getY() - 10, 20, 20, null);
+            g.drawImage(professorImage, getX() - size, getY() - size, diameter, diameter, null);
         } else {
             g.setColor(Color.BLACK);
-            g.fillOval(getX() - 10, getY() - 10, 20, 20); // Fallback to a circle
+            g.fillOval(getX() - size, getY() - size, diameter, diameter); // Fallback to a circle
         }
     }
 
     public boolean movementCheck(int x, int y) {
         // Collision detection logic
-        Rectangle professorBounds = new Rectangle(getX() - 10, getY() - 10, 20, 20);
-        Rectangle targetBounds = new Rectangle(x, y, 20, 20);
+        Rectangle professorBounds = new Rectangle(getX() - size, getY() - size, diameter, diameter);
+        Rectangle targetBounds = new Rectangle(x, y, diameter, diameter);
         return !professorBounds.intersects(targetBounds);
     }
 }
