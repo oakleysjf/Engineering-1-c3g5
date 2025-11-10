@@ -21,7 +21,7 @@ public class Main extends JPanel {
     final static int screenWidth = tileSize * maxScreenCol; // 1024 pixels
     final static int screenHeight = tileSize * maxScreenRow; // 640 pixels
 
-    public final static int maxWorldCol = 25;
+    public final static int maxWorldCol = 80;
     public final static int maxWorldRow = 25;
     public final static int worldWidth = tileSize * maxWorldCol;
     public final static int worldHeight = tileSize * maxWorldRow;
@@ -53,7 +53,7 @@ public class Main extends JPanel {
         setFocusable(true);
 
         map = new Map();
-        player = new Player(0, 0);
+        player = new Player(16 * tileSize, 18 * tileSize);
 
         setupKeyBindings();
 

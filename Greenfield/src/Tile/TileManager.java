@@ -21,8 +21,8 @@ public class TileManager {
     public TileManager(Main gp) {
         System.out.println("this runs cuhhh");
         this.gp = gp;
-        mapTileNum = new int[gp.maxWorldCol][gp.maxWorldRow];
-        mapBoundaryNum = new int[gp.maxWorldCol][gp.maxWorldRow];
+        mapTileNum = new int[gp.maxWorldRow][gp.maxWorldCol];
+        mapBoundaryNum = new int[gp.maxWorldRow][gp.maxWorldCol];
 
         tile = new Tile[10];
         getTileImage();
@@ -63,7 +63,7 @@ public class TileManager {
                 row++;
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
         }
 
         /* while (col < gp.maxWorldCol && row < gp.maxWorldRow) {
@@ -113,11 +113,27 @@ public class TileManager {
     public void getTileImage() {
         try {
             tile[0] = new Tile();
-            tile[0].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wood-flooring.png"));
+            tile[0].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wood-flooringD.png"));
             tile[1] = new Tile();
-            tile[1].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Rock-of-death.png"));
+            tile[1].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Empty.png"));
             tile[2] = new Tile();
-            tile[2].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/wall.png"));
+            tile[2].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-End.png"));
+            tile[3] = new Tile();
+            tile[3].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-Floor.png"));
+            tile[4] = new Tile();
+            tile[4].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-Middle-V.png"));
+            tile[4] = new Tile();
+            tile[4].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-Middle-V.png"));
+            tile[5] = new Tile();
+            tile[5].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-Middle-H.png"));
+            tile[6] = new Tile();
+            tile[6].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-N.png"));
+            tile[7] = new Tile();
+            tile[7].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-S.png"));
+            tile[8] = new Tile();
+            tile[8].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-W.png"));
+            tile[9] = new Tile();
+            tile[9].tileImage = ImageIO.read(getClass().getResourceAsStream("/GameAssets/TilesPieces/Wall-E.png"));
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -141,8 +157,8 @@ public class TileManager {
             offsetY = Main.worldHeight - Main.returnScreenHeight();
         }
 
-        for (int row = 0; row < gp.maxWorldCol; row++) {
-            for (int col = 0; col < gp.maxWorldRow; col++) {
+        for (int col = 0; col < gp.maxWorldCol; col++) {
+            for (int row = 0; row < gp.maxWorldRow; row++) {
                 if (true) {
                     int x = col * Main.returnTileSize();
                     int y = row * Main.returnTileSize();

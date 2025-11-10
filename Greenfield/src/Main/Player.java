@@ -25,8 +25,8 @@ public class Player {
     }
 
     public Player(int startX, int startY) {
-        this.x = startX;
-        this.y = startY;
+        this.x = startX + size + 12;
+        this.y = startY + size + 12;
 
         screenX = Main.returnTileSize() * 8 - size;
         screenY = Main.returnTileSize() * 5 - size;
@@ -76,7 +76,7 @@ public class Player {
         else {
             offsetY = 0;
         }
-        System.out.println("Player X: " + x + " Player Y: " + y);
+        //System.out.println("Player X: " + x + " Player Y: " + y);
 
         g.setColor(Color.WHITE);
         g.fillOval(screenX + offsetX, screenY + offsetY, diameter, diameter);
