@@ -38,13 +38,19 @@ public class Duck extends NPC {
         this.speed = 1; // Slow down the duck
 
         try {
-            duckImage = ImageIO.read(getClass().getResource("/Tiles/Duck.png"));
+            duckImage = ImageIO.read(getClass().getResource("/Tiles/duck_art.png"));
             if (duckImage == null) {
-                throw new IOException("Image file not found: /Tiles/Duck.png");
+                throw new IOException("Image file not found: /Tiles/duck_art.png");
             }
         } catch (IOException e) {
             System.err.println("Failed to load duck image: " + e.getMessage());
             e.printStackTrace();
+            // Create a fallback colored oval as the duck sprite
+            duckImage = new BufferedImage(diameter, diameter, BufferedImage.TYPE_INT_ARGB);
+            Graphics g = duckImage.getGraphics();
+            g.setColor(Color.YELLOW);
+            g.fillOval(0, 0, diameter, diameter);
+            g.dispose();
         }
     }
 
