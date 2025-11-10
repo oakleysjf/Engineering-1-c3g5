@@ -2,6 +2,7 @@ package Main;
 
 import Main.Interactables.Exit;
 import Main.Interactables.Items.*;
+import Main.Interactables.NPCs.Duck;
 import Main.Interactables.NPCs.Professor;
 import Main.Interactables.Obstacles.*;
 import Tile.TileManager;
@@ -28,6 +29,10 @@ public class Main extends JPanel {
     private final Exit exit;
     private boolean keyPickedUp = false;
     private Professor professor;
+    private Professor professor2;
+    private Duck duck;
+    private Duck duck2;
+
     private FreshersFlu freshersFlu;
     private EnergyDrink energyDrink;
 
@@ -64,9 +69,9 @@ public class Main extends JPanel {
     public final static int worldWidth = tileSize * maxWorldCol;
     public final static int worldHeight = tileSize * maxWorldRow;
 
-     int keyX = 2 * tileSize, keyY = 5 * tileSize;
-     int fluX = 6 * tileSize, fluY = 10 * tileSize;
-     int drinkX = 14 * tileSize, drinkY = 3 * tileSize;
+    int keyX = 70 * tileSize, keyY = 16 * tileSize;
+    int fluX = 3 * tileSize, fluY = 20 * tileSize;
+    int drinkX = 14 * tileSize, drinkY = 3 * tileSize;
     int doorX = 24 * tileSize, doorY = 24 * tileSize -10;
 
     private static int offsetX, offsetY;
@@ -119,6 +124,12 @@ public class Main extends JPanel {
         int professorStartY = 250; 
         professor = new Professor("Professor", professorStartX, professorStartY, 200);
 
+        professor2 = new Professor("Professor2", 19 * tileSize, 12 * tileSize, 3 * tileSize);
+
+        duck = new Duck("Duck", 35 * tileSize, 4 * tileSize, 15 * tileSize, 1);
+        duck2 = new Duck("Duck", 35 * tileSize, 3 * tileSize, 15 * tileSize, -1);
+
+
         // Calls the setupKeyBindings method.
         setupKeyBindings();
 
@@ -140,6 +151,10 @@ public class Main extends JPanel {
                     player.update(map);
                     checkInteractions();
                     professor.walkCycle(); // Update professor's position
+                    professor2.walkCycle(); // Update professor's position
+                    duck.walkCycle(); // Update duck's position
+                    duck2.walkCycle(); // Update duck's position
+
                 }
             }
             // Repaints all components actively.
@@ -300,6 +315,69 @@ public class Main extends JPanel {
                 
             }
         }
+        Rectangle professor2Bounds = new Rectangle(
+            professor2.getX() - interactionPadding,
+            professor2.getY() - interactionPadding,
+            professor2.getWidth() + 2 * interactionPadding,
+            professor2.getHeight() + 2 * interactionPadding
+        );
+        if (playerBounds.intersects(professor2Bounds)) {
+            int response = JOptionPane.showConfirmDialog(
+                this,
+                "Professor: Do you have your assignment?!",
+                "Professor Interaction",
+                JOptionPane.YES_NO_OPTION
+            );
+            interactionCounter++;
+
+            // MESSAGE: Cannot figure out a working method for chase interaction. This is left as blank. - Oakley 
+            if (response == JOptionPane.YES_OPTION || response == JOptionPane.NO_OPTION) {
+                // Close the dialogue box
+                
+            }
+        }
+        Rectangle duckBounds = new Rectangle(
+            duck.getX() - interactionPadding,
+            duck.getY() - interactionPadding,
+            duck.getWidth() + 2 * interactionPadding,
+            duck.getHeight() + 2 * interactionPadding
+        );
+        if (playerBounds.intersects(duckBounds)) {
+            int response = JOptionPane.showConfirmDialog(
+                this,
+                "Duck: Quack! Do you have any food?!",
+                "Duck Interaction",
+                JOptionPane.YES_NO_OPTION
+            );
+            interactionCounter++;
+
+            // MESSAGE: Cannot figure out a working method for chase interaction. This is left as blank. - Oakley 
+            if (response == JOptionPane.YES_OPTION || response == JOptionPane.NO_OPTION) {
+                // Close the dialogue box
+                
+            }
+        }
+        Rectangle duck2Bounds = new Rectangle(
+            duck2.getX() - interactionPadding,
+            duck2.getY() - interactionPadding,
+            duck2.getWidth() + 2 * interactionPadding,
+            duck2.getHeight() + 2 * interactionPadding
+        );
+        if (playerBounds.intersects(duck2Bounds)) {
+            int response = JOptionPane.showConfirmDialog(
+                this,
+                "Duck: Quack! Do you have any food?!",
+                "Duck Interaction",
+                JOptionPane.YES_NO_OPTION
+            );
+            interactionCounter++;
+
+            // MESSAGE: Cannot figure out a working method for chase interaction. This is left as blank. - Oakley 
+            if (response == JOptionPane.YES_OPTION || response == JOptionPane.NO_OPTION) {
+                // Close the dialogue box
+                
+            }
+        }
     }
 
     @Override
@@ -331,6 +409,10 @@ public class Main extends JPanel {
         tileM.draw((Graphics2D) g);
         player.draw(g);
         professor.draw(g);
+        professor2.draw(g);
+        duck.draw(g);
+        duck2.draw(g);
+
         
         if (!keyPickedUp) {
             g.setColor(Color.YELLOW);

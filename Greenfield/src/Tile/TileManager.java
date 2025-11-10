@@ -18,7 +18,6 @@ public class TileManager {
     int offsetY;
 
     public TileManager(Main gp) {
-        System.out.println("this runs cuhhh");
         this.gp = gp;
 
         mapTileNum = new int[gp.maxWorldRow][gp.maxWorldCol];
